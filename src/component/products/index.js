@@ -1,15 +1,32 @@
 import { useEffect, useState } from "react";
-import { addTocart, getAllProducts } from "../../API";
-import { Badge, Card, List, Rate, Typography, Button, message } from "antd";
+import { addTocart, getAllProducts, getallProductsBycategory } from "../../API";
+import {
+  Badge,
+  Card,
+  List,
+  Rate,
+  Typography,
+  Button,
+  message,
+  Spin,
+} from "antd";
 import Item from "antd/es/list/Item";
+import { useParams } from "react-router-dom";
 
 function Products() {
+  const [loding, setLoding] = useState(false);
+  const param = useParams();
   const [items, setItems] = useState([]);
   useEffect(() => {
-    getAllProducts().then((res) => {
+    setLoding(true)
+    getallProductsBycategory(param.categoryId).then((res) => {
       setItems(res.products);
+      setLoding(false);
     });
-  }, []);
+  }, [param]);
+  if (loding) {
+    return <Spin spinning />;
+  }
 
   return (
     <div>
@@ -31,7 +48,7 @@ function Products() {
                 }
                 actions={[
                   <Rate allowHalf disabled value={product.ratin} />,
-                  <AddTocartButton item={product}/>,
+                  <AddTocartButton item={product} />,
                 ]}
               >
                 <Card.Meta
@@ -59,23 +76,25 @@ function Products() {
 }
 
 function AddTocartButton({ item }) {
-  const [loding,setLoding]=useState(false)
+  const [loding, setLoding] = useState(false);
   const addProductCart = () => {
-    setLoding(true)
+    setLoding(true);
     addTocart(item.id).then((res) => {
       message.success(`${item.title} has been added to cart!`);
-      setLoding(false)
+      setLoding(false);
     });
   };
-  return<Button
-    type="link"
-    onClick={() => {
-      addProductCart();
-    }}
-    loading={loding}
-  >
-    Add to cart
-  </Button>;
+  return (
+    <Button
+      type="link"
+      onClick={() => {
+        addProductCart();
+      }}
+      loading={loding}
+    >
+      Add to cart
+    </Button>
+  );
 }
 
 export default Products;
