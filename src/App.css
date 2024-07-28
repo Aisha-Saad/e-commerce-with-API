@@ -14,7 +14,8 @@
 }
 .shoppingCart{
   font-size: 30px;
-  margin-right: 8px;
+  margin-right: 16px;
+  cursor: pointer;
 }
 
 .appFooter{
